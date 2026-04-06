@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from "react"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CreateTaskModal } from "@/components/workspaces/create-task-modal"
+import { TaskStatusBadge } from "@/components/workspaces/task-status-badge"
 import {
   Kanban,
   KanbanBoard,
@@ -15,7 +16,7 @@ import {
   KanbanMoveEvent,
   KanbanOverlay,
 } from "@/components/ui/kanban"
-import { fetchWrapper, isFetchWrapperError } from "@/lib/fetch-wrapper"
+import { updateTaskStatusAction } from "@/lib/server/tasks/actions"
 import type { WorkspaceTask } from "@/lib/types/workspace"
 import { cn } from "@/lib/utils"
 
@@ -166,20 +167,19 @@ export function WorkspaceKanban({ workspaceId, initialTasks }: WorkspaceKanbanPr
       }
 
       try {
-        await fetchWrapper(`/api/tasks/${moveResult.movedTask.id}`, {
-          method: "PATCH",
-          body: {
-            status: nextStatus,
-          },
+        const result = await updateTaskStatusAction({
+          taskId: moveResult.movedTask.id,
+          status: nextStatus,
         })
+
+        if (!result.ok) {
+          setColumns(previousColumns)
+          setError(result.error)
+        }
       } catch (moveError) {
         setColumns(previousColumns)
-
-        if (isFetchWrapperError(moveError)) {
-          setError(moveError.message)
-        } else {
-          setError("Failed to update task status")
-        }
+        console.error("Move task error:", moveError)
+        setError("Failed to update task status")
       }
     },
     [columns]
@@ -248,7 +248,10 @@ export function WorkspaceKanban({ workspaceId, initialTasks }: WorkspaceKanbanPr
                         <KanbanItem key={task.id} value={task.id}>
                           <KanbanItemHandle className="w-full">
                             <article className="rounded-lg border border-border bg-card p-3 shadow-xs">
-                              <h3 className="text-sm font-medium">{task.title}</h3>
+                              <div className="flex items-start justify-between gap-2">
+                                <h3 className="text-sm font-medium">{task.title}</h3>
+                                <TaskStatusBadge status={task.status} />
+                              </div>
                               <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                                 {task.description || "No description"}
                               </p>
@@ -280,7 +283,10 @@ export function WorkspaceKanban({ workspaceId, initialTasks }: WorkspaceKanbanPr
                   "w-64 rounded-lg border border-border bg-card p-3 shadow-lg"
                 )}
               >
-                <h3 className="text-sm font-medium">{task.title}</h3>
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="text-sm font-medium">{task.title}</h3>
+                  <TaskStatusBadge status={task.status} />
+                </div>
                 <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                   {task.description || "No description"}
                 </p>

@@ -6,7 +6,7 @@ import { type FormEvent, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { fetchWrapper, isFetchWrapperError } from "@/lib/fetch-wrapper"
+import { loginAction } from "@/lib/server/auth/actions"
 
 export function LoginForm() {
   const router = useRouter()
@@ -21,19 +21,20 @@ export function LoginForm() {
     setIsSubmitting(true)
 
     try {
-      await fetchWrapper("/api/auth/login", {
-        method: "POST",
-        body: { email, password },
+      const result = await loginAction({
+        email,
+        password,
       })
+
+      if (!result.ok) {
+        setError(result.error)
+        return
+      }
 
       router.push("/")
       router.refresh()
     } catch (submitError) {
-      if (isFetchWrapperError(submitError)) {
-        setError(submitError.message)
-        return
-      }
-
+      console.error("Login form submit error:", submitError)
       setError("Failed to sign in")
     } finally {
       setIsSubmitting(false)

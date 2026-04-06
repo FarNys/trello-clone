@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 
 import { DashboardShell } from "@/components/layout/dashboard-shell"
 import { WorkspaceKanban } from "@/components/workspaces/workspace-kanban"
-import { getWorkspaceBoard } from "@/lib/data/workspaces"
+import { getWorkspaceBoard } from "@/lib/server/workspaces/queries"
 
 type WorkspacePageProps = {
   params: Promise<{ workspaceId: string }>

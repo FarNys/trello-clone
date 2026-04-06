@@ -22,13 +22,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { fetchWrapper, isFetchWrapperError } from "@/lib/fetch-wrapper"
+import { createTaskAction } from "@/lib/server/tasks/actions"
 import type { WorkspaceTask } from "@/lib/types/workspace"
 import type { TaskStatusValue } from "@/lib/validations/workspace-task"
-
-type CreateTaskResponse = {
-  task: WorkspaceTask
-}
 
 type CreateTaskModalProps = {
   workspaceId: string
@@ -88,26 +84,23 @@ export function CreateTaskModal({
     setIsSubmitting(true)
 
     try {
-      const payload = await fetchWrapper<CreateTaskResponse>(
-        `/api/workspaces/${workspaceId}/tasks`,
-        {
-          method: "POST",
-          body: {
-            title: trimmedTitle,
-            description: trimmedDescription.length > 0 ? trimmedDescription : undefined,
-            status,
-          },
-        }
-      )
+      const result = await createTaskAction({
+        workspaceId,
+        title: trimmedTitle,
+        description: trimmedDescription.length > 0 ? trimmedDescription : undefined,
+        status,
+      })
 
-      onTaskCreated?.(payload.task)
+      if (!result.ok) {
+        setError(result.error)
+        return
+      }
+
+      onTaskCreated?.(result.data.task)
       setOpen(false)
     } catch (submitError) {
-      if (isFetchWrapperError(submitError)) {
-        setError(submitError.message)
-      } else {
-        setError("Failed to create task")
-      }
+      console.error("Create task modal submit error:", submitError)
+      setError("Failed to create task")
     } finally {
       setIsSubmitting(false)
     }

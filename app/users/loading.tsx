@@ -1,11 +1,8 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell"
-import { UsersTable } from "@/components/users/users-table"
+import { UsersTableSkeleton } from "@/components/users/users-table-skeleton"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { getUsersTableItems } from "@/lib/server/users/queries"
 
-export default async function UsersPage() {
-  const users = await getUsersTableItems()
-
+export default function UsersLoading() {
   return (
     <DashboardShell
       title="Users"
@@ -16,7 +13,7 @@ export default async function UsersPage() {
           <CardTitle className="text-lg">User Directory</CardTitle>
         </CardHeader>
         <CardContent>
-          <UsersTable users={users} />
+          <UsersTableSkeleton />
         </CardContent>
       </Card>
     </DashboardShell>

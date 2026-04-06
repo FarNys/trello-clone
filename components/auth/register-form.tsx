@@ -6,7 +6,7 @@ import { type FormEvent, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { fetchWrapper, isFetchWrapperError } from "@/lib/fetch-wrapper"
+import { registerAction } from "@/lib/server/auth/actions"
 
 export function RegisterForm() {
   const router = useRouter()
@@ -29,19 +29,21 @@ export function RegisterForm() {
     setIsSubmitting(true)
 
     try {
-      await fetchWrapper("/api/auth/register", {
-        method: "POST",
-        body: { name, email, password },
+      const result = await registerAction({
+        name,
+        email,
+        password,
       })
+
+      if (!result.ok) {
+        setError(result.error)
+        return
+      }
 
       router.push("/")
       router.refresh()
     } catch (submitError) {
-      if (isFetchWrapperError(submitError)) {
-        setError(submitError.message)
-        return
-      }
-
+      console.error("Register form submit error:", submitError)
       setError("Failed to create account")
     } finally {
       setIsSubmitting(false)
