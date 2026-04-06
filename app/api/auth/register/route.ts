@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const { name, email, password } = parsedBody.data
+    const { name, email, password, role: requestedRole } = parsedBody.data
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -35,6 +35,29 @@ export async function POST(request: Request) {
       )
     }
 
+    const userCount = await prisma.user.count()
+    let roleToCreate: "ADMIN" | "USER" = "USER"
+
+    if (requestedRole === "USER") {
+      roleToCreate = "USER"
+    } else if (userCount === 0) {
+      roleToCreate = "ADMIN"
+    } else if (requestedRole === "ADMIN") {
+      const existingAdmin = await prisma.user.findFirst({
+        where: { role: "ADMIN" },
+        select: { id: true },
+      })
+
+      if (existingAdmin) {
+        return NextResponse.json(
+          { error: "Only one admin account is allowed" },
+          { status: 409 }
+        )
+      }
+
+      roleToCreate = "ADMIN"
+    }
+
     const passwordHash = await hashPassword(password)
 
     const user = await prisma.user.create({
@@ -42,11 +65,13 @@ export async function POST(request: Request) {
         name,
         email,
         passwordHash,
+        role: roleToCreate,
       },
       select: {
         id: true,
         name: true,
         email: true,
+        role: true,
         createdAt: true,
       },
     })

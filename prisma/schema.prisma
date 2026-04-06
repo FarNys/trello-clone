@@ -12,12 +12,18 @@ model User {
   name                    String
   email                   String         @unique
   passwordHash            String
+  role                    UserRole       @default(USER)
   createdTasks            Task[]         @relation("CreatedTasks")
   assignedTasks           Task[]         @relation("AssignedTasks")
   taskActivitiesAsActor   TaskActivity[] @relation("TaskActivityActor")
   taskActivitiesAssignee  TaskActivity[] @relation("TaskActivityAssignee")
   createdAt               DateTime       @default(now())
   updatedAt               DateTime       @updatedAt
+}
+
+enum UserRole {
+  ADMIN
+  USER
 }
 
 model Workspace {

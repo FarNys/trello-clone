@@ -1,31 +1,47 @@
 import Link from "next/link"
 
+import { DashboardShell } from "@/components/layout/dashboard-shell"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function Page() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <div className="mt-2 flex items-center gap-2">
+    <DashboardShell
+      title="Overview"
+      description="Welcome to FTask. Use the sidebar to switch between workspaces and users."
+    >
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Quick Access</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2">
             <Button asChild>
+              <Link href="/workspaces">Workspaces</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/users">Users</Link>
+            </Button>
+            <Button asChild variant="ghost">
+              <Link href="/me">My account</Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Authentication</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2">
+            <Button asChild variant="outline">
               <Link href="/login">Login</Link>
             </Button>
             <Button asChild variant="outline">
               <Link href="/register">Register</Link>
             </Button>
-            <Button asChild variant="ghost">
-              <Link href="/me">My account</Link>
-            </Button>
-          </div>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </DashboardShell>
   )
 }
