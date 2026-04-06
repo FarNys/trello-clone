@@ -1,22 +1,16 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { WorkspacesDirectory } from "@/components/workspaces/workspaces-directory"
+import { getWorkspaceListItems } from "@/lib/data/workspaces"
 
-export default function WorkspacesPage() {
+export default async function WorkspacesPage() {
+  const workspaces = await getWorkspaceListItems()
+
   return (
     <DashboardShell
       title="Workspaces"
       description="Organize teams, projects, and task boards in one place."
     >
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Workspace List</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            Create and manage your workspaces from here.
-          </p>
-        </CardContent>
-      </Card>
+      <WorkspacesDirectory workspaces={workspaces} />
     </DashboardShell>
   )
 }
