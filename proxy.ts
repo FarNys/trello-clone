@@ -6,19 +6,19 @@ import { AUTH_COOKIE_NAME } from "@/lib/constants/auth"
 const AUTH_PAGES = new Set(["/login", "/register"])
 
 export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl
-  const token = request.cookies.get(AUTH_COOKIE_NAME)?.value
-  const isAuthPage = AUTH_PAGES.has(pathname)
+  // const { pathname } = request.nextUrl
+  // const token = request.cookies.get(AUTH_COOKIE_NAME)?.value
+  // const isAuthPage = AUTH_PAGES.has(pathname)
 
-  if (!token && !isAuthPage) {
-    const loginUrl = new URL("/login", request.url)
-    loginUrl.searchParams.set("next", `${pathname}${request.nextUrl.search}`)
-    return NextResponse.redirect(loginUrl)
-  }
+  // if (!token && !isAuthPage) {
+  //   const loginUrl = new URL("/login", request.url)
+  //   loginUrl.searchParams.set("next", `${pathname}${request.nextUrl.search}`)
+  //   return NextResponse.redirect(loginUrl)
+  // }
 
-  if (token && isAuthPage) {
-    return NextResponse.redirect(new URL("/", request.url))
-  }
+  // if (token && isAuthPage) {
+  //   return NextResponse.redirect(new URL("/", request.url))
+  // }
 
   return NextResponse.next()
 }
