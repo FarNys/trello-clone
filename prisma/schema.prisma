@@ -42,6 +42,7 @@ model Task {
   title       String
   description String?
   status      TaskStatus     @default(NEW)
+  deletedAt   DateTime?
   workspaceId String
   creatorId   String
   assigneeId  String?
@@ -56,6 +57,7 @@ model Task {
   @@index([creatorId])
   @@index([assigneeId])
   @@index([status])
+  @@index([deletedAt])
 }
 
 enum TaskStatus {
@@ -90,4 +92,6 @@ enum TaskActivityType {
   ASSIGNED
   UNASSIGNED
   STATUS_CHANGED
+  DELETED
+  RESTORED
 }

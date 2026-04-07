@@ -16,7 +16,11 @@ export const getWorkspaceListItems = cache(async (): Promise<WorkspaceListItem[]
       description: true,
       _count: {
         select: {
-          tasks: true,
+          tasks: {
+            where: {
+              deletedAt: null,
+            },
+          },
         },
       },
     },
@@ -35,6 +39,9 @@ export const getWorkspaceBoard = cache(
         id: true,
         name: true,
         tasks: {
+          where: {
+            deletedAt: null,
+          },
           orderBy: {
             updatedAt: "desc",
           },

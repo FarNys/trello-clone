@@ -29,6 +29,7 @@ export type TaskMinAggregateOutputType = {
   title: string | null
   description: string | null
   status: $Enums.TaskStatus | null
+  deletedAt: Date | null
   workspaceId: string | null
   creatorId: string | null
   assigneeId: string | null
@@ -41,6 +42,7 @@ export type TaskMaxAggregateOutputType = {
   title: string | null
   description: string | null
   status: $Enums.TaskStatus | null
+  deletedAt: Date | null
   workspaceId: string | null
   creatorId: string | null
   assigneeId: string | null
@@ -53,6 +55,7 @@ export type TaskCountAggregateOutputType = {
   title: number
   description: number
   status: number
+  deletedAt: number
   workspaceId: number
   creatorId: number
   assigneeId: number
@@ -67,6 +70,7 @@ export type TaskMinAggregateInputType = {
   title?: true
   description?: true
   status?: true
+  deletedAt?: true
   workspaceId?: true
   creatorId?: true
   assigneeId?: true
@@ -79,6 +83,7 @@ export type TaskMaxAggregateInputType = {
   title?: true
   description?: true
   status?: true
+  deletedAt?: true
   workspaceId?: true
   creatorId?: true
   assigneeId?: true
@@ -91,6 +96,7 @@ export type TaskCountAggregateInputType = {
   title?: true
   description?: true
   status?: true
+  deletedAt?: true
   workspaceId?: true
   creatorId?: true
   assigneeId?: true
@@ -176,6 +182,7 @@ export type TaskGroupByOutputType = {
   title: string
   description: string | null
   status: $Enums.TaskStatus
+  deletedAt: Date | null
   workspaceId: string
   creatorId: string
   assigneeId: string | null
@@ -209,6 +216,7 @@ export type TaskWhereInput = {
   title?: Prisma.StringFilter<"Task"> | string
   description?: Prisma.StringNullableFilter<"Task"> | string | null
   status?: Prisma.EnumTaskStatusFilter<"Task"> | $Enums.TaskStatus
+  deletedAt?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
   workspaceId?: Prisma.StringFilter<"Task"> | string
   creatorId?: Prisma.StringFilter<"Task"> | string
   assigneeId?: Prisma.StringNullableFilter<"Task"> | string | null
@@ -225,6 +233,7 @@ export type TaskOrderByWithRelationInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -244,6 +253,7 @@ export type TaskWhereUniqueInput = Prisma.AtLeast<{
   title?: Prisma.StringFilter<"Task"> | string
   description?: Prisma.StringNullableFilter<"Task"> | string | null
   status?: Prisma.EnumTaskStatusFilter<"Task"> | $Enums.TaskStatus
+  deletedAt?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
   workspaceId?: Prisma.StringFilter<"Task"> | string
   creatorId?: Prisma.StringFilter<"Task"> | string
   assigneeId?: Prisma.StringNullableFilter<"Task"> | string | null
@@ -260,6 +270,7 @@ export type TaskOrderByWithAggregationInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -278,6 +289,7 @@ export type TaskScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<"Task"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
   status?: Prisma.EnumTaskStatusWithAggregatesFilter<"Task"> | $Enums.TaskStatus
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
   workspaceId?: Prisma.StringWithAggregatesFilter<"Task"> | string
   creatorId?: Prisma.StringWithAggregatesFilter<"Task"> | string
   assigneeId?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
@@ -290,6 +302,7 @@ export type TaskCreateInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   workspace: Prisma.WorkspaceCreateNestedOneWithoutTasksInput
@@ -303,6 +316,7 @@ export type TaskUncheckedCreateInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   workspaceId: string
   creatorId: string
   assigneeId?: string | null
@@ -316,6 +330,7 @@ export type TaskUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutTasksNestedInput
@@ -329,6 +344,7 @@ export type TaskUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -342,6 +358,7 @@ export type TaskCreateManyInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   workspaceId: string
   creatorId: string
   assigneeId?: string | null
@@ -354,6 +371,7 @@ export type TaskUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -363,6 +381,7 @@ export type TaskUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -385,6 +404,7 @@ export type TaskCountOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrder
@@ -397,6 +417,7 @@ export type TaskMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrder
@@ -409,6 +430,7 @@ export type TaskMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrder
@@ -551,6 +573,10 @@ export type EnumTaskStatusFieldUpdateOperationsInput = {
   set?: $Enums.TaskStatus
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type TaskCreateNestedOneWithoutActivitiesInput = {
   create?: Prisma.XOR<Prisma.TaskCreateWithoutActivitiesInput, Prisma.TaskUncheckedCreateWithoutActivitiesInput>
   connectOrCreate?: Prisma.TaskCreateOrConnectWithoutActivitiesInput
@@ -570,6 +596,7 @@ export type TaskCreateWithoutCreatorInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   workspace: Prisma.WorkspaceCreateNestedOneWithoutTasksInput
@@ -582,6 +609,7 @@ export type TaskUncheckedCreateWithoutCreatorInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   workspaceId: string
   assigneeId?: string | null
   createdAt?: Date | string
@@ -604,6 +632,7 @@ export type TaskCreateWithoutAssigneeInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   workspace: Prisma.WorkspaceCreateNestedOneWithoutTasksInput
@@ -616,6 +645,7 @@ export type TaskUncheckedCreateWithoutAssigneeInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   workspaceId: string
   creatorId: string
   createdAt?: Date | string
@@ -657,6 +687,7 @@ export type TaskScalarWhereInput = {
   title?: Prisma.StringFilter<"Task"> | string
   description?: Prisma.StringNullableFilter<"Task"> | string | null
   status?: Prisma.EnumTaskStatusFilter<"Task"> | $Enums.TaskStatus
+  deletedAt?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
   workspaceId?: Prisma.StringFilter<"Task"> | string
   creatorId?: Prisma.StringFilter<"Task"> | string
   assigneeId?: Prisma.StringNullableFilter<"Task"> | string | null
@@ -685,6 +716,7 @@ export type TaskCreateWithoutWorkspaceInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   creator: Prisma.UserCreateNestedOneWithoutCreatedTasksInput
@@ -697,6 +729,7 @@ export type TaskUncheckedCreateWithoutWorkspaceInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   creatorId: string
   assigneeId?: string | null
   createdAt?: Date | string
@@ -735,6 +768,7 @@ export type TaskCreateWithoutActivitiesInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   workspace: Prisma.WorkspaceCreateNestedOneWithoutTasksInput
@@ -747,6 +781,7 @@ export type TaskUncheckedCreateWithoutActivitiesInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   workspaceId: string
   creatorId: string
   assigneeId?: string | null
@@ -775,6 +810,7 @@ export type TaskUpdateWithoutActivitiesInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutTasksNestedInput
@@ -787,6 +823,7 @@ export type TaskUncheckedUpdateWithoutActivitiesInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -799,6 +836,7 @@ export type TaskCreateManyCreatorInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   workspaceId: string
   assigneeId?: string | null
   createdAt?: Date | string
@@ -810,6 +848,7 @@ export type TaskCreateManyAssigneeInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   workspaceId: string
   creatorId: string
   createdAt?: Date | string
@@ -821,6 +860,7 @@ export type TaskUpdateWithoutCreatorInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutTasksNestedInput
@@ -833,6 +873,7 @@ export type TaskUncheckedUpdateWithoutCreatorInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -845,6 +886,7 @@ export type TaskUncheckedUpdateManyWithoutCreatorInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -856,6 +898,7 @@ export type TaskUpdateWithoutAssigneeInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutTasksNestedInput
@@ -868,6 +911,7 @@ export type TaskUncheckedUpdateWithoutAssigneeInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -880,6 +924,7 @@ export type TaskUncheckedUpdateManyWithoutAssigneeInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -891,6 +936,7 @@ export type TaskCreateManyWorkspaceInput = {
   title: string
   description?: string | null
   status?: $Enums.TaskStatus
+  deletedAt?: Date | string | null
   creatorId: string
   assigneeId?: string | null
   createdAt?: Date | string
@@ -902,6 +948,7 @@ export type TaskUpdateWithoutWorkspaceInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creator?: Prisma.UserUpdateOneRequiredWithoutCreatedTasksNestedInput
@@ -914,6 +961,7 @@ export type TaskUncheckedUpdateWithoutWorkspaceInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -926,6 +974,7 @@ export type TaskUncheckedUpdateManyWithoutWorkspaceInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -968,6 +1017,7 @@ export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   title?: boolean
   description?: boolean
   status?: boolean
+  deletedAt?: boolean
   workspaceId?: boolean
   creatorId?: boolean
   assigneeId?: boolean
@@ -985,6 +1035,7 @@ export type TaskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   title?: boolean
   description?: boolean
   status?: boolean
+  deletedAt?: boolean
   workspaceId?: boolean
   creatorId?: boolean
   assigneeId?: boolean
@@ -1000,6 +1051,7 @@ export type TaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   title?: boolean
   description?: boolean
   status?: boolean
+  deletedAt?: boolean
   workspaceId?: boolean
   creatorId?: boolean
   assigneeId?: boolean
@@ -1015,6 +1067,7 @@ export type TaskSelectScalar = {
   title?: boolean
   description?: boolean
   status?: boolean
+  deletedAt?: boolean
   workspaceId?: boolean
   creatorId?: boolean
   assigneeId?: boolean
@@ -1022,7 +1075,7 @@ export type TaskSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "status" | "workspaceId" | "creatorId" | "assigneeId" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
+export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "status" | "deletedAt" | "workspaceId" | "creatorId" | "assigneeId" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
 export type TaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
   creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1054,6 +1107,7 @@ export type $TaskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     title: string
     description: string | null
     status: $Enums.TaskStatus
+    deletedAt: Date | null
     workspaceId: string
     creatorId: string
     assigneeId: string | null
@@ -1490,6 +1544,7 @@ export interface TaskFieldRefs {
   readonly title: Prisma.FieldRef<"Task", 'String'>
   readonly description: Prisma.FieldRef<"Task", 'String'>
   readonly status: Prisma.FieldRef<"Task", 'TaskStatus'>
+  readonly deletedAt: Prisma.FieldRef<"Task", 'DateTime'>
   readonly workspaceId: Prisma.FieldRef<"Task", 'String'>
   readonly creatorId: Prisma.FieldRef<"Task", 'String'>
   readonly assigneeId: Prisma.FieldRef<"Task", 'String'>

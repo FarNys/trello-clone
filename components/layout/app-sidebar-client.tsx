@@ -12,12 +12,14 @@ const NAV_ITEMS = [
   {
     href: "/workspaces",
     label: "Workspaces",
-    description: "Manage boards and task groups",
   },
   {
     href: "/users",
     label: "Users",
-    description: "Team members and access",
+  },
+  {
+    href: "/tasks/deleted",
+    label: "Deleted Tasks",
   },
 ]
 
@@ -70,9 +72,6 @@ export function AppSidebarClient({ workspaces }: AppSidebarClientProps) {
               >
                 <Link href={item.href}>
                   <span className="text-sm font-medium">{item.label}</span>
-                  <span className="block text-xs font-normal text-muted-foreground">
-                    {item.description}
-                  </span>
                 </Link>
               </Button>
             )
@@ -100,17 +99,12 @@ export function AppSidebarClient({ workspaces }: AppSidebarClientProps) {
                   variant={active ? "secondary" : "ghost"}
                   size="sm"
                   className={cn(
-                    "h-auto w-full justify-between px-3 py-2 text-left",
+                    "h-8 w-full justify-start px-3 text-left",
                     active && "border border-border"
                   )}
                 >
                   <Link href={href}>
-                    <span className="truncate text-xs font-medium">
-                      {workspace.name}
-                    </span>
-                    <span className="rounded border border-border bg-background px-1 text-[10px] text-muted-foreground">
-                      {(workspace._count?.tasks ?? 0).toString()}
-                    </span>
+                    <span className="truncate text-xs font-medium">{workspace.name}</span>
                   </Link>
                 </Button>
               )

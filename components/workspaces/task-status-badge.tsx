@@ -37,13 +37,14 @@ const STATUS_BADGE_CONFIG: Record<
 
 type TaskStatusBadgeProps = {
   status: TaskStatusValue
+  size?: "xs" | "sm" | "default" | "lg" | "xl"
 }
 
-export function TaskStatusBadge({ status }: TaskStatusBadgeProps) {
+export function TaskStatusBadge({ status, size = "lg" }: TaskStatusBadgeProps) {
   const config = STATUS_BADGE_CONFIG[status]
 
   return (
-    <Badge variant={config.variant} size="sm" radius="full">
+    <Badge variant={config.variant} size={size}>
       {config.label}
     </Badge>
   )

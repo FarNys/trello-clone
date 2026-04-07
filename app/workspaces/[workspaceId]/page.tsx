@@ -20,6 +20,7 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
     <DashboardShell
       title={`${workspace.name} Board`}
       description={`Kanban board for workspace ${workspace.name}.`}
+      fullHeight
     >
       <WorkspaceKanban workspaceId={workspaceId} initialTasks={workspace.tasks} />
     </DashboardShell>

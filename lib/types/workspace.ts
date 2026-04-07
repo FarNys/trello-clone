@@ -15,3 +15,30 @@ export type WorkspaceTask = {
   description?: string | null
   status: TaskStatusValue
 }
+
+export type TaskActivityTypeValue =
+  | "CREATED"
+  | "ASSIGNED"
+  | "UNASSIGNED"
+  | "STATUS_CHANGED"
+  | "DELETED"
+  | "RESTORED"
+
+export type WorkspaceTaskActivity = {
+  id: string
+  type: TaskActivityTypeValue
+  fromStatus?: TaskStatusValue | null
+  toStatus?: TaskStatusValue | null
+  createdAt: string
+  actor?: {
+    id: string
+    name: string
+  } | null
+}
+
+export type WorkspaceTaskDetails = WorkspaceTask & {
+  createdAt: string
+  updatedAt: string
+  deletedAt?: string | null
+  activities: WorkspaceTaskActivity[]
+}

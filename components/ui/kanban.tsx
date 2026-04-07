@@ -9,7 +9,6 @@ import {
   ReactNode,
   useCallback,
   useContext,
-  useLayoutEffect,
   useMemo,
   useState,
 } from "react"
@@ -702,9 +701,6 @@ export interface KanbanOverlayProps extends Omit<
 
 function KanbanOverlay({ children, className, ...props }: KanbanOverlayProps) {
   const { activeId, isColumn, modifiers } = useContext(KanbanContext)
-  const [mounted, setMounted] = useState(false)
-
-  useLayoutEffect(() => setMounted(true), [])
 
   const variant = activeId ? (isColumn(activeId) ? "column" : "item") : "item"
 
@@ -715,7 +711,7 @@ function KanbanOverlay({ children, className, ...props }: KanbanOverlayProps) {
         : children
       : null
 
-  if (!mounted) return null
+  if (typeof document === "undefined") return null
 
   return createPortal(
     <DragOverlay

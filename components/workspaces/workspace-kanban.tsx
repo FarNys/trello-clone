@@ -3,9 +3,8 @@
 import { arrayMove } from "@dnd-kit/sortable"
 import { useCallback, useMemo, useState } from "react"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CreateTaskModal } from "@/components/workspaces/create-task-modal"
-import { TaskStatusBadge } from "@/components/workspaces/task-status-badge"
+import { TaskDetailsSheet } from "@/components/tasks/task-details-sheet"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import {
   Kanban,
   KanbanBoard,
@@ -16,9 +15,10 @@ import {
   KanbanMoveEvent,
   KanbanOverlay,
 } from "@/components/ui/kanban"
+import { CreateTaskModal } from "@/components/workspaces/create-task-modal"
+import { TaskStatusBadge } from "@/components/workspaces/task-status-badge"
 import { updateTaskStatusAction } from "@/lib/server/tasks/actions"
 import type { WorkspaceTask } from "@/lib/types/workspace"
-import { cn } from "@/lib/utils"
 
 type TaskStatus = WorkspaceTask["status"]
 
@@ -26,12 +26,12 @@ const COLUMN_ORDER = ["backlog", "new", "inprogress", "review", "done"] as const
 type ColumnKey = (typeof COLUMN_ORDER)[number]
 type ColumnState = Record<ColumnKey, WorkspaceTask[]>
 
-const COLUMN_CONFIG: Record<ColumnKey, { title: string; status: TaskStatus }> = {
-  backlog: { title: "Backlog", status: "BACKLOG" },
-  new: { title: "New", status: "NEW" },
-  inprogress: { title: "In Progress", status: "IN_PROGRESS" },
-  review: { title: "Review", status: "PREVIEW" },
-  done: { title: "Done", status: "DONE" },
+const COLUMN_CONFIG: Record<ColumnKey, { status: TaskStatus }> = {
+  backlog: { status: "BACKLOG" },
+  new: { status: "NEW" },
+  inprogress: { status: "IN_PROGRESS" },
+  review: { status: "PREVIEW" },
+  done: { status: "DONE" },
 }
 
 const STATUS_TO_COLUMN: Record<TaskStatus, ColumnKey> = {
@@ -104,8 +104,13 @@ function applyMove(columns: ColumnState, moveEvent: KanbanMoveEvent) {
     return { nextColumns: columns, movedTask: null, from, to }
   }
 
+  const movedTaskWithStatus: WorkspaceTask = {
+    ...movedTask,
+    status: COLUMN_CONFIG[to].status,
+  }
+
   const insertIndex = Math.max(0, Math.min(moveEvent.overIndex, targetItems.length))
-  targetItems.splice(insertIndex, 0, movedTask)
+  targetItems.splice(insertIndex, 0, movedTaskWithStatus)
 
   return {
     nextColumns: {
@@ -113,7 +118,7 @@ function applyMove(columns: ColumnState, moveEvent: KanbanMoveEvent) {
       [from]: sourceItems,
       [to]: targetItems,
     },
-    movedTask,
+    movedTask: movedTaskWithStatus,
     from,
     to,
   }
@@ -129,6 +134,8 @@ export function WorkspaceKanban({ workspaceId, initialTasks }: WorkspaceKanbanPr
     mapTasksToColumns(initialTasks)
   )
   const [error, setError] = useState<string | null>(null)
+  const [taskDetailsOpen, setTaskDetailsOpen] = useState(false)
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
 
   const totalTasks = useMemo(
     () => Object.values(columns).reduce((sum, tasks) => sum + tasks.length, 0),
@@ -142,6 +149,29 @@ export function WorkspaceKanban({ workspaceId, initialTasks }: WorkspaceKanbanPr
     setColumns((prev) => ({
       ...prev,
       [column]: [task, ...prev[column]],
+    }))
+  }, [])
+
+  const handleTaskClick = useCallback((taskId: string) => {
+    setSelectedTaskId(taskId)
+    setTaskDetailsOpen(true)
+  }, [])
+
+  const handleTaskDetailsOpenChange = useCallback((open: boolean) => {
+    setTaskDetailsOpen(open)
+
+    if (!open) {
+      setSelectedTaskId(null)
+    }
+  }, [])
+
+  const handleTaskDeleted = useCallback((taskId: string) => {
+    setColumns((prev) => ({
+      backlog: prev.backlog.filter((task) => task.id !== taskId),
+      new: prev.new.filter((task) => task.id !== taskId),
+      inprogress: prev.inprogress.filter((task) => task.id !== taskId),
+      review: prev.review.filter((task) => task.id !== taskId),
+      done: prev.done.filter((task) => task.id !== taskId),
     }))
   }, [])
 
@@ -175,7 +205,10 @@ export function WorkspaceKanban({ workspaceId, initialTasks }: WorkspaceKanbanPr
         if (!result.ok) {
           setColumns(previousColumns)
           setError(result.error)
+          return
         }
+
+        setError(null)
       } catch (moveError) {
         setColumns(previousColumns)
         console.error("Move task error:", moveError)
@@ -186,7 +219,7 @@ export function WorkspaceKanban({ workspaceId, initialTasks }: WorkspaceKanbanPr
   )
 
   return (
-    <section className="space-y-4">
+    <section className="flex h-full min-h-0 flex-col gap-4 overflow-hidden p-0.5">
       <Card className="gap-3 py-4">
         <CardContent className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="space-y-1">
@@ -221,41 +254,47 @@ export function WorkspaceKanban({ workspaceId, initialTasks }: WorkspaceKanbanPr
       )}
 
       <Kanban
+        className="flex min-h-0 flex-1 flex-col"
         value={columns}
         onValueChange={(value) => setColumns(value as ColumnState)}
         getItemValue={(item) => item.id}
         onMove={(event) => void handleMove(event)}
       >
-        <KanbanBoard className="grid auto-rows-fr gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <KanbanBoard className="h-full min-h-0 gap-4 md:grid-cols-2 xl:grid-cols-5">
           {COLUMN_ORDER.map((columnKey) => {
             const tasks = columns[columnKey]
 
             return (
-              <KanbanColumn key={columnKey} value={columnKey}>
-                <Card className="h-full gap-3 py-4">
-                  <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm font-semibold">
-                      {COLUMN_CONFIG[columnKey].title}
-                    </CardTitle>
+              <KanbanColumn key={columnKey} value={columnKey} className="min-h-0">
+                <Card className="h-full min-h-0 gap-0 py-0">
+                  <CardHeader className="flex flex-row items-center justify-between border-b border-border/70 py-3!">
+                    <TaskStatusBadge
+                      status={COLUMN_CONFIG[columnKey].status}
+                      size="default"
+                    />
                     <span className="rounded-md border border-border bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
                       {tasks.length}
                     </span>
                   </CardHeader>
 
-                  <CardContent>
-                    <KanbanColumnContent value={columnKey} className="min-h-20 gap-2">
+                  <CardContent className="flex min-h-0 flex-1 flex-col px-0">
+                    <KanbanColumnContent
+                      value={columnKey}
+                      className="min-h-0 flex-1 gap-0 overflow-y-auto"
+                    >
                       {tasks.map((task) => (
                         <KanbanItem key={task.id} value={task.id}>
                           <KanbanItemHandle className="w-full">
-                            <article className="rounded-lg border border-border bg-card p-3 shadow-xs">
-                              <div className="flex items-start justify-between gap-2">
-                                <h3 className="text-sm font-medium">{task.title}</h3>
-                                <TaskStatusBadge status={task.status} />
-                              </div>
+                            <button
+                              type="button"
+                              onClick={() => handleTaskClick(task.id)}
+                              className="w-full border-b border-border/70 px-3 py-3 text-left hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                            >
+                              <h3 className="text-sm font-medium">{task.title}</h3>
                               <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                                 {task.description || "No description"}
                               </p>
-                            </article>
+                            </button>
                           </KanbanItemHandle>
                         </KanbanItem>
                       ))}
@@ -278,15 +317,8 @@ export function WorkspaceKanban({ workspaceId, initialTasks }: WorkspaceKanbanPr
             }
 
             return (
-              <article
-                className={cn(
-                  "w-64 rounded-lg border border-border bg-card p-3 shadow-lg"
-                )}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-sm font-medium">{task.title}</h3>
-                  <TaskStatusBadge status={task.status} />
-                </div>
+              <article className="w-64 border border-border bg-card px-3 py-3">
+                <h3 className="text-sm font-medium">{task.title}</h3>
                 <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                   {task.description || "No description"}
                 </p>
@@ -295,6 +327,13 @@ export function WorkspaceKanban({ workspaceId, initialTasks }: WorkspaceKanbanPr
           }}
         </KanbanOverlay>
       </Kanban>
+
+      <TaskDetailsSheet
+        taskId={selectedTaskId}
+        open={taskDetailsOpen}
+        onOpenChange={handleTaskDetailsOpenChange}
+        onTaskDeleted={handleTaskDeleted}
+      />
     </section>
   )
 }

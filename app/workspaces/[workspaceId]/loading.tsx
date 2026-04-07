@@ -6,6 +6,7 @@ export default function WorkspaceLoading() {
     <DashboardShell
       title="Workspace Board"
       description="Loading workspace board..."
+      fullHeight
     >
       <WorkspaceKanbanSkeleton />
     </DashboardShell>

@@ -32,7 +32,9 @@ export const TaskActivityType = {
   CREATED: 'CREATED',
   ASSIGNED: 'ASSIGNED',
   UNASSIGNED: 'UNASSIGNED',
-  STATUS_CHANGED: 'STATUS_CHANGED'
+  STATUS_CHANGED: 'STATUS_CHANGED',
+  DELETED: 'DELETED',
+  RESTORED: 'RESTORED'
 } as const
 
 export type TaskActivityType = (typeof TaskActivityType)[keyof typeof TaskActivityType]

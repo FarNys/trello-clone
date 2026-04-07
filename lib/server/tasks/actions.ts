@@ -5,7 +5,11 @@ import { revalidatePath } from "next/cache"
 import { getAuthUserIdFromCookie } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import type { ActionResult } from "@/lib/server/action-result"
-import type { WorkspaceTask } from "@/lib/types/workspace"
+import type {
+  WorkspaceTask,
+  WorkspaceTaskActivity,
+  WorkspaceTaskDetails,
+} from "@/lib/types/workspace"
 import {
   type TaskStatusValue,
   taskCreateSchema,
@@ -30,6 +34,72 @@ type UpdateTaskStatusInput = {
 
 type UpdateTaskStatusPayload = {
   task: WorkspaceTask
+  activity?: WorkspaceTaskActivity
+}
+
+type SoftDeleteTaskInput = {
+  taskId: string
+}
+
+type SoftDeleteTaskPayload = {
+  task: {
+    id: string
+    workspaceId: string
+    deletedAt: string
+  }
+  activity: WorkspaceTaskActivity
+}
+
+type RestoreTaskInput = {
+  taskId: string
+}
+
+type RestoreTaskPayload = {
+  task: {
+    id: string
+    workspaceId: string
+  }
+  activity: WorkspaceTaskActivity
+}
+
+type GetTaskDetailsInput = {
+  taskId: string
+}
+
+type GetTaskDetailsPayload = {
+  task: WorkspaceTaskDetails
+}
+
+function mapTaskActivityToPayload(activity: {
+  id: string
+  type:
+    | "CREATED"
+    | "ASSIGNED"
+    | "UNASSIGNED"
+    | "STATUS_CHANGED"
+    | "DELETED"
+    | "RESTORED"
+  fromStatus: TaskStatusValue | null
+  toStatus: TaskStatusValue | null
+  createdAt: Date
+  actor: {
+    id: string
+    name: string
+  } | null
+}): WorkspaceTaskActivity {
+  return {
+    id: activity.id,
+    type: activity.type,
+    fromStatus: activity.fromStatus,
+    toStatus: activity.toStatus,
+    createdAt: activity.createdAt.toISOString(),
+    actor: activity.actor
+      ? {
+          id: activity.actor.id,
+          name: activity.actor.name,
+        }
+      : null,
+  }
 }
 
 export async function createTaskAction(
@@ -135,12 +205,17 @@ export async function updateTaskStatusAction(
         title: true,
         description: true,
         status: true,
+        deletedAt: true,
         workspaceId: true,
       },
     })
 
     if (!existingTask) {
       return { ok: false, error: "Task not found" }
+    }
+
+    if (existingTask.deletedAt) {
+      return { ok: false, error: "Cannot move a deleted task" }
     }
 
     if (existingTask.status === parsedBody.data.status) {
@@ -153,11 +228,12 @@ export async function updateTaskStatusAction(
             description: existingTask.description,
             status: existingTask.status,
           },
+          activity: undefined,
         },
       }
     }
 
-    const [updatedTask] = await prisma.$transaction([
+    const [updatedTask, activity] = await prisma.$transaction([
       prisma.task.update({
         where: { id: input.taskId },
         data: {
@@ -179,6 +255,19 @@ export async function updateTaskStatusAction(
           fromStatus: existingTask.status,
           toStatus: parsedBody.data.status,
         },
+        select: {
+          id: true,
+          type: true,
+          fromStatus: true,
+          toStatus: true,
+          createdAt: true,
+          actor: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
       }),
     ])
 
@@ -195,10 +284,257 @@ export async function updateTaskStatusAction(
           description: updatedTask.description,
           status: updatedTask.status,
         },
+        activity: mapTaskActivityToPayload(activity),
       },
     }
   } catch (error) {
     console.error("Update task status action error:", error)
     return { ok: false, error: "Failed to update task status" }
+  }
+}
+
+export async function getTaskDetailsAction(
+  input: GetTaskDetailsInput
+): Promise<ActionResult<GetTaskDetailsPayload>> {
+  const userId = await getAuthUserIdFromCookie()
+  if (!userId) {
+    return { ok: false, error: "Unauthorized" }
+  }
+
+  if (!input.taskId) {
+    return { ok: false, error: "Task id is required" }
+  }
+
+  try {
+    const task = await prisma.task.findUnique({
+      where: { id: input.taskId },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+        activities: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          select: {
+            id: true,
+            type: true,
+            fromStatus: true,
+            toStatus: true,
+            createdAt: true,
+            actor: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    if (!task) {
+      return { ok: false, error: "Task not found" }
+    }
+
+    return {
+      ok: true,
+      data: {
+        task: {
+          id: task.id,
+          title: task.title,
+          description: task.description,
+          status: task.status,
+          createdAt: task.createdAt.toISOString(),
+          updatedAt: task.updatedAt.toISOString(),
+          deletedAt: task.deletedAt?.toISOString() ?? null,
+          activities: task.activities.map(mapTaskActivityToPayload),
+        },
+      },
+    }
+  } catch (error) {
+    console.error("Get task details action error:", error)
+    return { ok: false, error: "Failed to fetch task details" }
+  }
+}
+
+export async function softDeleteTaskAction(
+  input: SoftDeleteTaskInput
+): Promise<ActionResult<SoftDeleteTaskPayload>> {
+  const userId = await getAuthUserIdFromCookie()
+  if (!userId) {
+    return { ok: false, error: "Unauthorized" }
+  }
+
+  if (!input.taskId) {
+    return { ok: false, error: "Task id is required" }
+  }
+
+  try {
+    const existingTask = await prisma.task.findUnique({
+      where: { id: input.taskId },
+      select: {
+        id: true,
+        status: true,
+        deletedAt: true,
+        workspaceId: true,
+      },
+    })
+
+    if (!existingTask) {
+      return { ok: false, error: "Task not found" }
+    }
+
+    if (existingTask.deletedAt) {
+      return { ok: false, error: "Task is already deleted" }
+    }
+
+    const now = new Date()
+
+    const [deletedTask, activity] = await prisma.$transaction([
+      prisma.task.update({
+        where: { id: input.taskId },
+        data: {
+          deletedAt: now,
+        },
+        select: {
+          id: true,
+          workspaceId: true,
+          deletedAt: true,
+        },
+      }),
+      prisma.taskActivity.create({
+        data: {
+          taskId: input.taskId,
+          actorId: userId,
+          type: "DELETED",
+          fromStatus: existingTask.status,
+        },
+        select: {
+          id: true,
+          type: true,
+          fromStatus: true,
+          toStatus: true,
+          createdAt: true,
+          actor: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      }),
+    ])
+
+    revalidatePath("/", "layout")
+    revalidatePath(`/workspaces/${deletedTask.workspaceId}`)
+    revalidatePath("/workspaces")
+    revalidatePath("/tasks/deleted")
+
+    return {
+      ok: true,
+      data: {
+        task: {
+          id: deletedTask.id,
+          workspaceId: deletedTask.workspaceId,
+          deletedAt:
+            deletedTask.deletedAt?.toISOString() ?? new Date().toISOString(),
+        },
+        activity: mapTaskActivityToPayload(activity),
+      },
+    }
+  } catch (error) {
+    console.error("Soft delete task action error:", error)
+    return { ok: false, error: "Failed to delete task" }
+  }
+}
+
+export async function restoreTaskAction(
+  input: RestoreTaskInput
+): Promise<ActionResult<RestoreTaskPayload>> {
+  const userId = await getAuthUserIdFromCookie()
+  if (!userId) {
+    return { ok: false, error: "Unauthorized" }
+  }
+
+  if (!input.taskId) {
+    return { ok: false, error: "Task id is required" }
+  }
+
+  try {
+    const existingTask = await prisma.task.findUnique({
+      where: { id: input.taskId },
+      select: {
+        id: true,
+        status: true,
+        deletedAt: true,
+        workspaceId: true,
+      },
+    })
+
+    if (!existingTask) {
+      return { ok: false, error: "Task not found" }
+    }
+
+    if (!existingTask.deletedAt) {
+      return { ok: false, error: "Task is not deleted" }
+    }
+
+    const [restoredTask, activity] = await prisma.$transaction([
+      prisma.task.update({
+        where: { id: input.taskId },
+        data: {
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          workspaceId: true,
+        },
+      }),
+      prisma.taskActivity.create({
+        data: {
+          taskId: input.taskId,
+          actorId: userId,
+          type: "RESTORED",
+          toStatus: existingTask.status,
+        },
+        select: {
+          id: true,
+          type: true,
+          fromStatus: true,
+          toStatus: true,
+          createdAt: true,
+          actor: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      }),
+    ])
+
+    revalidatePath("/", "layout")
+    revalidatePath(`/workspaces/${restoredTask.workspaceId}`)
+    revalidatePath("/workspaces")
+    revalidatePath("/tasks/deleted")
+
+    return {
+      ok: true,
+      data: {
+        task: {
+          id: restoredTask.id,
+          workspaceId: restoredTask.workspaceId,
+        },
+        activity: mapTaskActivityToPayload(activity),
+      },
+    }
+  } catch (error) {
+    console.error("Restore task action error:", error)
+    return { ok: false, error: "Failed to restore task" }
   }
 }
