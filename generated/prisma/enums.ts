@@ -17,6 +17,19 @@ export const UserRole = {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
+export const TaskFileType = {
+  IMAGE: 'IMAGE',
+  PDF: 'PDF',
+  TEXT: 'TEXT',
+  VIDEO: 'VIDEO',
+  AUDIO: 'AUDIO',
+  ARCHIVE: 'ARCHIVE',
+  OTHER: 'OTHER'
+} as const
+
+export type TaskFileType = (typeof TaskFileType)[keyof typeof TaskFileType]
+
+
 export const TaskStatus = {
   BACKLOG: 'BACKLOG',
   NEW: 'NEW',

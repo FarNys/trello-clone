@@ -21,6 +21,10 @@ const NAV_ITEMS = [
     href: "/tasks/deleted",
     label: "Deleted Tasks",
   },
+  {
+    href: "/files",
+    label: "Files",
+  },
 ]
 
 function isActivePath(pathname: string, href: string) {

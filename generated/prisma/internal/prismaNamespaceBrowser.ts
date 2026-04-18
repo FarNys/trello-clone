@@ -54,6 +54,7 @@ export const ModelName = {
   User: 'User',
   Workspace: 'Workspace',
   Task: 'Task',
+  TaskFile: 'TaskFile',
   TaskActivity: 'TaskActivity'
 } as const
 
@@ -111,6 +112,23 @@ export const TaskScalarFieldEnum = {
 } as const
 
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
+
+
+export const TaskFileScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  uploaderId: 'uploaderId',
+  originalName: 'originalName',
+  storageName: 'storageName',
+  url: 'url',
+  mimeType: 'mimeType',
+  fileType: 'fileType',
+  sizeBytes: 'sizeBytes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TaskFileScalarFieldEnum = (typeof TaskFileScalarFieldEnum)[keyof typeof TaskFileScalarFieldEnum]
 
 
 export const TaskActivityScalarFieldEnum = {

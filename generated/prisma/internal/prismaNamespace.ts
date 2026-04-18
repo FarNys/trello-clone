@@ -387,6 +387,7 @@ export const ModelName = {
   User: 'User',
   Workspace: 'Workspace',
   Task: 'Task',
+  TaskFile: 'TaskFile',
   TaskActivity: 'TaskActivity'
 } as const
 
@@ -403,7 +404,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "workspace" | "task" | "taskActivity"
+    modelProps: "user" | "workspace" | "task" | "taskFile" | "taskActivity"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -629,6 +630,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TaskFile: {
+      payload: Prisma.$TaskFilePayload<ExtArgs>
+      fields: Prisma.TaskFileFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TaskFileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskFilePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TaskFileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskFilePayload>
+        }
+        findFirst: {
+          args: Prisma.TaskFileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskFilePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TaskFileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskFilePayload>
+        }
+        findMany: {
+          args: Prisma.TaskFileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskFilePayload>[]
+        }
+        create: {
+          args: Prisma.TaskFileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskFilePayload>
+        }
+        createMany: {
+          args: Prisma.TaskFileCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TaskFileCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskFilePayload>[]
+        }
+        delete: {
+          args: Prisma.TaskFileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskFilePayload>
+        }
+        update: {
+          args: Prisma.TaskFileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskFilePayload>
+        }
+        deleteMany: {
+          args: Prisma.TaskFileDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TaskFileUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TaskFileUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskFilePayload>[]
+        }
+        upsert: {
+          args: Prisma.TaskFileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskFilePayload>
+        }
+        aggregate: {
+          args: Prisma.TaskFileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTaskFile>
+        }
+        groupBy: {
+          args: Prisma.TaskFileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TaskFileGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TaskFileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TaskFileCountAggregateOutputType> | number
+        }
+      }
+    }
     TaskActivity: {
       payload: Prisma.$TaskActivityPayload<ExtArgs>
       fields: Prisma.TaskActivityFieldRefs
@@ -782,6 +857,23 @@ export const TaskScalarFieldEnum = {
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
 
 
+export const TaskFileScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  uploaderId: 'uploaderId',
+  originalName: 'originalName',
+  storageName: 'storageName',
+  url: 'url',
+  mimeType: 'mimeType',
+  fileType: 'fileType',
+  sizeBytes: 'sizeBytes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TaskFileScalarFieldEnum = (typeof TaskFileScalarFieldEnum)[keyof typeof TaskFileScalarFieldEnum]
+
+
 export const TaskActivityScalarFieldEnum = {
   id: 'id',
   taskId: 'taskId',
@@ -883,16 +975,16 @@ export type ListEnumTaskStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
- * Reference to a field of type 'TaskActivityType'
+ * Reference to a field of type 'TaskFileType'
  */
-export type EnumTaskActivityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskActivityType'>
+export type EnumTaskFileTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskFileType'>
     
 
 
 /**
- * Reference to a field of type 'TaskActivityType[]'
+ * Reference to a field of type 'TaskFileType[]'
  */
-export type ListEnumTaskActivityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskActivityType[]'>
+export type ListEnumTaskFileTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskFileType[]'>
     
 
 
@@ -907,6 +999,34 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TaskActivityType'
+ */
+export type EnumTaskActivityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskActivityType'>
+    
+
+
+/**
+ * Reference to a field of type 'TaskActivityType[]'
+ */
+export type ListEnumTaskActivityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskActivityType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**
@@ -1007,6 +1127,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   workspace?: Prisma.WorkspaceOmit
   task?: Prisma.TaskOmit
+  taskFile?: Prisma.TaskFileOmit
   taskActivity?: Prisma.TaskActivityOmit
 }
 

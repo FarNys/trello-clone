@@ -1,4 +1,5 @@
 import type { TaskStatusValue } from "@/lib/validations/workspace-task"
+import type { TaskFileTypeValue } from "@/lib/constants/files"
 
 export type WorkspaceListItem = {
   id: string
@@ -14,6 +15,20 @@ export type WorkspaceTask = {
   title: string
   description?: string | null
   status: TaskStatusValue
+}
+
+export type WorkspaceTaskFile = {
+  id: string
+  originalName: string
+  url: string
+  mimeType: string
+  fileType: TaskFileTypeValue
+  sizeBytes: number
+  createdAt: string
+  uploader?: {
+    id: string
+    name: string
+  } | null
 }
 
 export type TaskActivityTypeValue =
@@ -40,5 +55,6 @@ export type WorkspaceTaskDetails = WorkspaceTask & {
   createdAt: string
   updatedAt: string
   deletedAt?: string | null
+  files: WorkspaceTaskFile[]
   activities: WorkspaceTaskActivity[]
 }

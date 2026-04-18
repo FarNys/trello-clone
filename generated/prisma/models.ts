@@ -11,5 +11,6 @@
 export type * from './models/User'
 export type * from './models/Workspace'
 export type * from './models/Task'
+export type * from './models/TaskFile'
 export type * from './models/TaskActivity'
 export type * from './commonInputTypes'

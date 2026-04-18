@@ -8,9 +8,11 @@ import type { ActionResult } from "@/lib/server/action-result"
 import type {
   WorkspaceTask,
   WorkspaceTaskActivity,
+  WorkspaceTaskFile,
   WorkspaceTaskDetails,
 } from "@/lib/types/workspace"
 import {
+  type TaskFileCreateInput,
   type TaskStatusValue,
   taskCreateSchema,
   taskUpdateSchema,
@@ -21,6 +23,7 @@ type CreateTaskInput = {
   title: string
   description?: string
   status: TaskStatusValue
+  files?: TaskFileCreateInput[]
 }
 
 type CreateTaskPayload = {
@@ -102,6 +105,31 @@ function mapTaskActivityToPayload(activity: {
   }
 }
 
+function mapTaskFileToPayload(file: {
+  id: string
+  originalName: string
+  url: string
+  mimeType: string
+  fileType: WorkspaceTaskFile["fileType"]
+  sizeBytes: number
+  createdAt: Date
+  uploader: {
+    id: string
+    name: string
+  } | null
+}): WorkspaceTaskFile {
+  return {
+    id: file.id,
+    originalName: file.originalName,
+    url: file.url,
+    mimeType: file.mimeType,
+    fileType: file.fileType,
+    sizeBytes: file.sizeBytes,
+    createdAt: file.createdAt.toISOString(),
+    uploader: file.uploader,
+  }
+}
+
 export async function createTaskAction(
   input: CreateTaskInput
 ): Promise<ActionResult<CreateTaskPayload>> {
@@ -114,6 +142,7 @@ export async function createTaskAction(
     title: input.title,
     description: input.description,
     status: input.status,
+    files: input.files,
   })
 
   if (!parsedBody.success) {
@@ -143,6 +172,20 @@ export async function createTaskAction(
         status: statusToCreate,
         workspaceId: input.workspaceId,
         creatorId: userId,
+        files:
+          parsedBody.data.files && parsedBody.data.files.length > 0
+            ? {
+                create: parsedBody.data.files.map((file) => ({
+                  originalName: file.originalName,
+                  storageName: file.storageName,
+                  url: file.url,
+                  mimeType: file.mimeType,
+                  fileType: file.fileType,
+                  sizeBytes: file.sizeBytes,
+                  uploaderId: userId,
+                })),
+              }
+            : undefined,
         activities: {
           create: {
             type: "CREATED",
@@ -163,6 +206,7 @@ export async function createTaskAction(
     revalidatePath("/", "layout")
     revalidatePath(`/workspaces/${task.workspaceId}`)
     revalidatePath("/workspaces")
+    revalidatePath("/files")
 
     return {
       ok: true,
@@ -316,6 +360,26 @@ export async function getTaskDetailsAction(
         createdAt: true,
         updatedAt: true,
         deletedAt: true,
+        files: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          select: {
+            id: true,
+            originalName: true,
+            url: true,
+            mimeType: true,
+            fileType: true,
+            sizeBytes: true,
+            createdAt: true,
+            uploader: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
         activities: {
           orderBy: {
             createdAt: "desc",
@@ -352,6 +416,7 @@ export async function getTaskDetailsAction(
           createdAt: task.createdAt.toISOString(),
           updatedAt: task.updatedAt.toISOString(),
           deletedAt: task.deletedAt?.toISOString() ?? null,
+          files: task.files.map(mapTaskFileToPayload),
           activities: task.activities.map(mapTaskActivityToPayload),
         },
       },
@@ -434,6 +499,7 @@ export async function softDeleteTaskAction(
     revalidatePath(`/workspaces/${deletedTask.workspaceId}`)
     revalidatePath("/workspaces")
     revalidatePath("/tasks/deleted")
+    revalidatePath("/files")
 
     return {
       ok: true,
@@ -522,6 +588,7 @@ export async function restoreTaskAction(
     revalidatePath(`/workspaces/${restoredTask.workspaceId}`)
     revalidatePath("/workspaces")
     revalidatePath("/tasks/deleted")
+    revalidatePath("/files")
 
     return {
       ok: true,

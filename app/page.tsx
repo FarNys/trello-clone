@@ -25,6 +25,9 @@ export default function Page() {
             <Button asChild variant="ghost">
               <Link href="/me">My account</Link>
             </Button>
+            <Button asChild variant="outline">
+              <Link href="/files">Files</Link>
+            </Button>
           </CardContent>
         </Card>
 

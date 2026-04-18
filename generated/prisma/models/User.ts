@@ -200,6 +200,7 @@ export type UserWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   createdTasks?: Prisma.TaskListRelationFilter
   assignedTasks?: Prisma.TaskListRelationFilter
+  uploadedTaskFiles?: Prisma.TaskFileListRelationFilter
   taskActivitiesAsActor?: Prisma.TaskActivityListRelationFilter
   taskActivitiesAssignee?: Prisma.TaskActivityListRelationFilter
 }
@@ -214,6 +215,7 @@ export type UserOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   createdTasks?: Prisma.TaskOrderByRelationAggregateInput
   assignedTasks?: Prisma.TaskOrderByRelationAggregateInput
+  uploadedTaskFiles?: Prisma.TaskFileOrderByRelationAggregateInput
   taskActivitiesAsActor?: Prisma.TaskActivityOrderByRelationAggregateInput
   taskActivitiesAssignee?: Prisma.TaskActivityOrderByRelationAggregateInput
 }
@@ -231,6 +233,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   createdTasks?: Prisma.TaskListRelationFilter
   assignedTasks?: Prisma.TaskListRelationFilter
+  uploadedTaskFiles?: Prisma.TaskFileListRelationFilter
   taskActivitiesAsActor?: Prisma.TaskActivityListRelationFilter
   taskActivitiesAssignee?: Prisma.TaskActivityListRelationFilter
 }, "id" | "email">
@@ -271,6 +274,7 @@ export type UserCreateInput = {
   updatedAt?: Date | string
   createdTasks?: Prisma.TaskCreateNestedManyWithoutCreatorInput
   assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
+  uploadedTaskFiles?: Prisma.TaskFileCreateNestedManyWithoutUploaderInput
   taskActivitiesAsActor?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   taskActivitiesAssignee?: Prisma.TaskActivityCreateNestedManyWithoutAssigneeInput
 }
@@ -285,6 +289,7 @@ export type UserUncheckedCreateInput = {
   updatedAt?: Date | string
   createdTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatorInput
   assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
+  uploadedTaskFiles?: Prisma.TaskFileUncheckedCreateNestedManyWithoutUploaderInput
   taskActivitiesAsActor?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   taskActivitiesAssignee?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutAssigneeInput
 }
@@ -299,6 +304,7 @@ export type UserUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdTasks?: Prisma.TaskUpdateManyWithoutCreatorNestedInput
   assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
+  uploadedTaskFiles?: Prisma.TaskFileUpdateManyWithoutUploaderNestedInput
   taskActivitiesAsActor?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   taskActivitiesAssignee?: Prisma.TaskActivityUpdateManyWithoutAssigneeNestedInput
 }
@@ -313,6 +319,7 @@ export type UserUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdTasks?: Prisma.TaskUncheckedUpdateManyWithoutCreatorNestedInput
   assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  uploadedTaskFiles?: Prisma.TaskFileUncheckedUpdateManyWithoutUploaderNestedInput
   taskActivitiesAsActor?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   taskActivitiesAssignee?: Prisma.TaskActivityUncheckedUpdateManyWithoutAssigneeNestedInput
 }
@@ -429,6 +436,22 @@ export type UserUpdateOneWithoutAssignedTasksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAssignedTasksInput, Prisma.UserUpdateWithoutAssignedTasksInput>, Prisma.UserUncheckedUpdateWithoutAssignedTasksInput>
 }
 
+export type UserCreateNestedOneWithoutUploadedTaskFilesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUploadedTaskFilesInput, Prisma.UserUncheckedCreateWithoutUploadedTaskFilesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUploadedTaskFilesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutUploadedTaskFilesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUploadedTaskFilesInput, Prisma.UserUncheckedCreateWithoutUploadedTaskFilesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUploadedTaskFilesInput
+  upsert?: Prisma.UserUpsertWithoutUploadedTaskFilesInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUploadedTaskFilesInput, Prisma.UserUpdateWithoutUploadedTaskFilesInput>, Prisma.UserUncheckedUpdateWithoutUploadedTaskFilesInput>
+}
+
 export type UserCreateNestedOneWithoutTaskActivitiesAsActorInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutTaskActivitiesAsActorInput, Prisma.UserUncheckedCreateWithoutTaskActivitiesAsActorInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutTaskActivitiesAsActorInput
@@ -470,6 +493,7 @@ export type UserCreateWithoutCreatedTasksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
+  uploadedTaskFiles?: Prisma.TaskFileCreateNestedManyWithoutUploaderInput
   taskActivitiesAsActor?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   taskActivitiesAssignee?: Prisma.TaskActivityCreateNestedManyWithoutAssigneeInput
 }
@@ -483,6 +507,7 @@ export type UserUncheckedCreateWithoutCreatedTasksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
+  uploadedTaskFiles?: Prisma.TaskFileUncheckedCreateNestedManyWithoutUploaderInput
   taskActivitiesAsActor?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   taskActivitiesAssignee?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutAssigneeInput
 }
@@ -501,6 +526,7 @@ export type UserCreateWithoutAssignedTasksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   createdTasks?: Prisma.TaskCreateNestedManyWithoutCreatorInput
+  uploadedTaskFiles?: Prisma.TaskFileCreateNestedManyWithoutUploaderInput
   taskActivitiesAsActor?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
   taskActivitiesAssignee?: Prisma.TaskActivityCreateNestedManyWithoutAssigneeInput
 }
@@ -514,6 +540,7 @@ export type UserUncheckedCreateWithoutAssignedTasksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   createdTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatorInput
+  uploadedTaskFiles?: Prisma.TaskFileUncheckedCreateNestedManyWithoutUploaderInput
   taskActivitiesAsActor?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
   taskActivitiesAssignee?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutAssigneeInput
 }
@@ -543,6 +570,7 @@ export type UserUpdateWithoutCreatedTasksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
+  uploadedTaskFiles?: Prisma.TaskFileUpdateManyWithoutUploaderNestedInput
   taskActivitiesAsActor?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   taskActivitiesAssignee?: Prisma.TaskActivityUpdateManyWithoutAssigneeNestedInput
 }
@@ -556,6 +584,7 @@ export type UserUncheckedUpdateWithoutCreatedTasksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  uploadedTaskFiles?: Prisma.TaskFileUncheckedUpdateManyWithoutUploaderNestedInput
   taskActivitiesAsActor?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   taskActivitiesAssignee?: Prisma.TaskActivityUncheckedUpdateManyWithoutAssigneeNestedInput
 }
@@ -580,6 +609,7 @@ export type UserUpdateWithoutAssignedTasksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdTasks?: Prisma.TaskUpdateManyWithoutCreatorNestedInput
+  uploadedTaskFiles?: Prisma.TaskFileUpdateManyWithoutUploaderNestedInput
   taskActivitiesAsActor?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
   taskActivitiesAssignee?: Prisma.TaskActivityUpdateManyWithoutAssigneeNestedInput
 }
@@ -593,6 +623,79 @@ export type UserUncheckedUpdateWithoutAssignedTasksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdTasks?: Prisma.TaskUncheckedUpdateManyWithoutCreatorNestedInput
+  uploadedTaskFiles?: Prisma.TaskFileUncheckedUpdateManyWithoutUploaderNestedInput
+  taskActivitiesAsActor?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
+  taskActivitiesAssignee?: Prisma.TaskActivityUncheckedUpdateManyWithoutAssigneeNestedInput
+}
+
+export type UserCreateWithoutUploadedTaskFilesInput = {
+  id?: string
+  name: string
+  email: string
+  passwordHash: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdTasks?: Prisma.TaskCreateNestedManyWithoutCreatorInput
+  assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
+  taskActivitiesAsActor?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
+  taskActivitiesAssignee?: Prisma.TaskActivityCreateNestedManyWithoutAssigneeInput
+}
+
+export type UserUncheckedCreateWithoutUploadedTaskFilesInput = {
+  id?: string
+  name: string
+  email: string
+  passwordHash: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatorInput
+  assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
+  taskActivitiesAsActor?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
+  taskActivitiesAssignee?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutAssigneeInput
+}
+
+export type UserCreateOrConnectWithoutUploadedTaskFilesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUploadedTaskFilesInput, Prisma.UserUncheckedCreateWithoutUploadedTaskFilesInput>
+}
+
+export type UserUpsertWithoutUploadedTaskFilesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUploadedTaskFilesInput, Prisma.UserUncheckedUpdateWithoutUploadedTaskFilesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUploadedTaskFilesInput, Prisma.UserUncheckedCreateWithoutUploadedTaskFilesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUploadedTaskFilesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUploadedTaskFilesInput, Prisma.UserUncheckedUpdateWithoutUploadedTaskFilesInput>
+}
+
+export type UserUpdateWithoutUploadedTaskFilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdTasks?: Prisma.TaskUpdateManyWithoutCreatorNestedInput
+  assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
+  taskActivitiesAsActor?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
+  taskActivitiesAssignee?: Prisma.TaskActivityUpdateManyWithoutAssigneeNestedInput
+}
+
+export type UserUncheckedUpdateWithoutUploadedTaskFilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdTasks?: Prisma.TaskUncheckedUpdateManyWithoutCreatorNestedInput
+  assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
   taskActivitiesAsActor?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
   taskActivitiesAssignee?: Prisma.TaskActivityUncheckedUpdateManyWithoutAssigneeNestedInput
 }
@@ -607,6 +710,7 @@ export type UserCreateWithoutTaskActivitiesAsActorInput = {
   updatedAt?: Date | string
   createdTasks?: Prisma.TaskCreateNestedManyWithoutCreatorInput
   assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
+  uploadedTaskFiles?: Prisma.TaskFileCreateNestedManyWithoutUploaderInput
   taskActivitiesAssignee?: Prisma.TaskActivityCreateNestedManyWithoutAssigneeInput
 }
 
@@ -620,6 +724,7 @@ export type UserUncheckedCreateWithoutTaskActivitiesAsActorInput = {
   updatedAt?: Date | string
   createdTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatorInput
   assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
+  uploadedTaskFiles?: Prisma.TaskFileUncheckedCreateNestedManyWithoutUploaderInput
   taskActivitiesAssignee?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutAssigneeInput
 }
 
@@ -638,6 +743,7 @@ export type UserCreateWithoutTaskActivitiesAssigneeInput = {
   updatedAt?: Date | string
   createdTasks?: Prisma.TaskCreateNestedManyWithoutCreatorInput
   assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
+  uploadedTaskFiles?: Prisma.TaskFileCreateNestedManyWithoutUploaderInput
   taskActivitiesAsActor?: Prisma.TaskActivityCreateNestedManyWithoutActorInput
 }
 
@@ -651,6 +757,7 @@ export type UserUncheckedCreateWithoutTaskActivitiesAssigneeInput = {
   updatedAt?: Date | string
   createdTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatorInput
   assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
+  uploadedTaskFiles?: Prisma.TaskFileUncheckedCreateNestedManyWithoutUploaderInput
   taskActivitiesAsActor?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -680,6 +787,7 @@ export type UserUpdateWithoutTaskActivitiesAsActorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdTasks?: Prisma.TaskUpdateManyWithoutCreatorNestedInput
   assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
+  uploadedTaskFiles?: Prisma.TaskFileUpdateManyWithoutUploaderNestedInput
   taskActivitiesAssignee?: Prisma.TaskActivityUpdateManyWithoutAssigneeNestedInput
 }
 
@@ -693,6 +801,7 @@ export type UserUncheckedUpdateWithoutTaskActivitiesAsActorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdTasks?: Prisma.TaskUncheckedUpdateManyWithoutCreatorNestedInput
   assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  uploadedTaskFiles?: Prisma.TaskFileUncheckedUpdateManyWithoutUploaderNestedInput
   taskActivitiesAssignee?: Prisma.TaskActivityUncheckedUpdateManyWithoutAssigneeNestedInput
 }
 
@@ -717,6 +826,7 @@ export type UserUpdateWithoutTaskActivitiesAssigneeInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdTasks?: Prisma.TaskUpdateManyWithoutCreatorNestedInput
   assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
+  uploadedTaskFiles?: Prisma.TaskFileUpdateManyWithoutUploaderNestedInput
   taskActivitiesAsActor?: Prisma.TaskActivityUpdateManyWithoutActorNestedInput
 }
 
@@ -730,6 +840,7 @@ export type UserUncheckedUpdateWithoutTaskActivitiesAssigneeInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdTasks?: Prisma.TaskUncheckedUpdateManyWithoutCreatorNestedInput
   assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  uploadedTaskFiles?: Prisma.TaskFileUncheckedUpdateManyWithoutUploaderNestedInput
   taskActivitiesAsActor?: Prisma.TaskActivityUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -741,6 +852,7 @@ export type UserUncheckedUpdateWithoutTaskActivitiesAssigneeInput = {
 export type UserCountOutputType = {
   createdTasks: number
   assignedTasks: number
+  uploadedTaskFiles: number
   taskActivitiesAsActor: number
   taskActivitiesAssignee: number
 }
@@ -748,6 +860,7 @@ export type UserCountOutputType = {
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdTasks?: boolean | UserCountOutputTypeCountCreatedTasksArgs
   assignedTasks?: boolean | UserCountOutputTypeCountAssignedTasksArgs
+  uploadedTaskFiles?: boolean | UserCountOutputTypeCountUploadedTaskFilesArgs
   taskActivitiesAsActor?: boolean | UserCountOutputTypeCountTaskActivitiesAsActorArgs
   taskActivitiesAssignee?: boolean | UserCountOutputTypeCountTaskActivitiesAssigneeArgs
 }
@@ -779,6 +892,13 @@ export type UserCountOutputTypeCountAssignedTasksArgs<ExtArgs extends runtime.Ty
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountUploadedTaskFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TaskFileWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountTaskActivitiesAsActorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.TaskActivityWhereInput
 }
@@ -801,6 +921,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   createdTasks?: boolean | Prisma.User$createdTasksArgs<ExtArgs>
   assignedTasks?: boolean | Prisma.User$assignedTasksArgs<ExtArgs>
+  uploadedTaskFiles?: boolean | Prisma.User$uploadedTaskFilesArgs<ExtArgs>
   taskActivitiesAsActor?: boolean | Prisma.User$taskActivitiesAsActorArgs<ExtArgs>
   taskActivitiesAssignee?: boolean | Prisma.User$taskActivitiesAssigneeArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -840,6 +961,7 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdTasks?: boolean | Prisma.User$createdTasksArgs<ExtArgs>
   assignedTasks?: boolean | Prisma.User$assignedTasksArgs<ExtArgs>
+  uploadedTaskFiles?: boolean | Prisma.User$uploadedTaskFilesArgs<ExtArgs>
   taskActivitiesAsActor?: boolean | Prisma.User$taskActivitiesAsActorArgs<ExtArgs>
   taskActivitiesAssignee?: boolean | Prisma.User$taskActivitiesAssigneeArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -852,6 +974,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     createdTasks: Prisma.$TaskPayload<ExtArgs>[]
     assignedTasks: Prisma.$TaskPayload<ExtArgs>[]
+    uploadedTaskFiles: Prisma.$TaskFilePayload<ExtArgs>[]
     taskActivitiesAsActor: Prisma.$TaskActivityPayload<ExtArgs>[]
     taskActivitiesAssignee: Prisma.$TaskActivityPayload<ExtArgs>[]
   }
@@ -1259,6 +1382,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   createdTasks<T extends Prisma.User$createdTasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdTasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignedTasks<T extends Prisma.User$assignedTasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedTasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  uploadedTaskFiles<T extends Prisma.User$uploadedTaskFilesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$uploadedTaskFilesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   taskActivitiesAsActor<T extends Prisma.User$taskActivitiesAsActorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$taskActivitiesAsActorArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   taskActivitiesAssignee<T extends Prisma.User$taskActivitiesAssigneeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$taskActivitiesAssigneeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1735,6 +1859,30 @@ export type User$assignedTasksArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.TaskScalarFieldEnum | Prisma.TaskScalarFieldEnum[]
+}
+
+/**
+ * User.uploadedTaskFiles
+ */
+export type User$uploadedTaskFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TaskFile
+   */
+  select?: Prisma.TaskFileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TaskFile
+   */
+  omit?: Prisma.TaskFileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TaskFileInclude<ExtArgs> | null
+  where?: Prisma.TaskFileWhereInput
+  orderBy?: Prisma.TaskFileOrderByWithRelationInput | Prisma.TaskFileOrderByWithRelationInput[]
+  cursor?: Prisma.TaskFileWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TaskFileScalarFieldEnum | Prisma.TaskFileScalarFieldEnum[]
 }
 
 /**
