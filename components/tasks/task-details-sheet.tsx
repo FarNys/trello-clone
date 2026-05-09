@@ -1,13 +1,10 @@
 "use client"
 
+import { Delete02Icon, RestoreBinIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Delete02Icon,
-  RestoreBinIcon,
-} from "@hugeicons/core-free-icons"
-import Image from "next/image"
 import { useCallback, useEffect, useRef, useState } from "react"
 
+import { TaskAttachmentsSection } from "@/components/tasks/task-attachments-section"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -23,7 +20,6 @@ import {
   restoreTaskAction,
   softDeleteTaskAction,
 } from "@/lib/server/tasks/actions"
-import { TASK_FILE_TYPE_LABELS } from "@/lib/constants/files"
 import type { WorkspaceTaskDetails } from "@/lib/types/workspace"
 
 type TaskDetailsSheetProps = {
@@ -34,28 +30,6 @@ type TaskDetailsSheetProps = {
   onTaskRestored?: (taskId: string) => void
 }
 
-const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  dateStyle: "medium",
-  timeStyle: "short",
-})
-
-function formatBytes(bytes: number) {
-  if (bytes < 1024) {
-    return `${bytes} B`
-  }
-
-  const units = ["KB", "MB", "GB"]
-  let value = bytes / 1024
-  let unitIndex = 0
-
-  while (value >= 1024 && unitIndex < units.length - 1) {
-    value /= 1024
-    unitIndex += 1
-  }
-
-  return `${value.toFixed(1)} ${units[unitIndex]}`
-}
-
 export function TaskDetailsSheet({
   taskId,
   open,
@@ -63,7 +37,9 @@ export function TaskDetailsSheet({
   onTaskDeleted,
   onTaskRestored,
 }: TaskDetailsSheetProps) {
-  const [taskDetails, setTaskDetails] = useState<WorkspaceTaskDetails | null>(null)
+  const [taskDetails, setTaskDetails] = useState<WorkspaceTaskDetails | null>(
+    null
+  )
   const [loadingTaskDetails, setLoadingTaskDetails] = useState(false)
   const [taskDetailsError, setTaskDetailsError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -186,7 +162,9 @@ export function TaskDetailsSheet({
               <SheetTitle>
                 {taskDetails?.title ?? (taskId ? "Task details" : "Task")}
               </SheetTitle>
-              {taskDetails && <TaskStatusBadge status={taskDetails.status} size="default" />}
+              {taskDetails && (
+                <TaskStatusBadge status={taskDetails.status} size="default" />
+              )}
             </div>
             <SheetDescription>
               Task info and activity history in timeline view.
@@ -195,7 +173,9 @@ export function TaskDetailsSheet({
 
           <div className="min-h-0 flex-1 space-y-6 overflow-y-auto p-4">
             {loadingTaskDetails && (
-              <p className="text-sm text-muted-foreground">Loading task details...</p>
+              <p className="text-sm text-muted-foreground">
+                Loading task details...
+              </p>
             )}
 
             {!loadingTaskDetails && taskDetailsError && (
@@ -241,58 +221,11 @@ export function TaskDetailsSheet({
                   </p>
                 </section>
 
-                <section className="space-y-3 border-b border-border/70 pb-4">
-                  <h3 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-                    Files
-                  </h3>
-                  {taskDetails.files.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No files attached.</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {taskDetails.files.map((file) => (
-                        <article
-                          key={file.id}
-                          className="rounded-md border border-border/70 bg-muted/20 p-3"
-                        >
-                          {file.fileType === "IMAGE" && (
-                            <Image
-                              src={file.url}
-                              alt={file.originalName}
-                              width={960}
-                              height={540}
-                              className="mb-3 max-h-48 w-full rounded-md border border-border/60 object-contain"
-                            />
-                          )}
-                          <div className="flex flex-wrap items-center justify-between gap-2">
-                            <div className="space-y-1">
-                              <p className="text-sm font-medium">{file.originalName}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {TASK_FILE_TYPE_LABELS[file.fileType]} •{" "}
-                                {formatBytes(file.sizeBytes)} •{" "}
-                                {DATE_FORMATTER.format(new Date(file.createdAt))}
-                              </p>
-                              {file.uploader && (
-                                <p className="text-xs text-muted-foreground">
-                                  Uploaded by {file.uploader.name}
-                                </p>
-                              )}
-                            </div>
-
-                            <Button asChild size="sm" variant="outline">
-                              <a
-                                href={file.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                Open file
-                              </a>
-                            </Button>
-                          </div>
-                        </article>
-                      ))}
-                    </div>
-                  )}
-                </section>
+                <TaskAttachmentsSection
+                  taskId={taskDetails.id}
+                  files={taskDetails.files}
+                  onFilesUpdated={() => loadTaskDetails(taskDetails.id)}
+                />
 
                 <TaskActivityLogs activities={taskDetails.activities} />
               </>

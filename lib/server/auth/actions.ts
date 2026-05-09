@@ -135,3 +135,14 @@ export async function registerAction(
     return { ok: false, error: "Failed to create account" }
   }
 }
+
+export async function logoutAction(): Promise<ActionResult<null>> {
+  try {
+    const cookieStore = await cookies()
+    cookieStore.delete(AUTH_COOKIE_NAME)
+    return { ok: true, data: null }
+  } catch (error) {
+    console.error("Logout action error:", error)
+    return { ok: false, error: "Failed to sign out" }
+  }
+}

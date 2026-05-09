@@ -1,10 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
+import { useTransition } from "react"
 
 import { ThemeToggle } from "@/components/layout/theme-toggle"
 import { Button } from "@/components/ui/button"
+import { logoutAction } from "@/lib/server/auth/actions"
 import type { WorkspaceListItem } from "@/lib/types/workspace"
 import { cn } from "@/lib/utils"
 
@@ -36,7 +38,17 @@ type AppSidebarClientProps = {
 }
 
 export function AppSidebarClient({ workspaces }: AppSidebarClientProps) {
+  const router = useRouter()
   const pathname = usePathname()
+  const [isLoggingOut, startLogoutTransition] = useTransition()
+
+  const handleLogout = () => {
+    startLogoutTransition(async () => {
+      await logoutAction()
+      router.replace("/login")
+      router.refresh()
+    })
+  }
 
   return (
     <aside className="border-b border-border bg-sidebar/70 px-4 py-4 backdrop-blur md:h-svh md:border-r md:border-b-0 md:px-5 md:py-6">
@@ -116,7 +128,16 @@ export function AppSidebarClient({ workspaces }: AppSidebarClientProps) {
           </div>
         </div>
 
-        <div className="mt-auto">
+        <div className="mt-auto space-y-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+          >
+            {isLoggingOut ? "Logging out..." : "Logout"}
+          </Button>
           <ThemeToggle />
         </div>
       </div>

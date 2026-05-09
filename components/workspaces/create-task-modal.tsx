@@ -46,6 +46,23 @@ const STATUS_OPTIONS: Array<{ value: TaskStatusValue; label: string }> = [
   { value: "DONE", label: "Done" },
 ]
 
+function formatBytes(bytes: number) {
+  if (bytes < 1024) {
+    return `${bytes} B`
+  }
+
+  const units = ["KB", "MB", "GB"]
+  let value = bytes / 1024
+  let unitIndex = 0
+
+  while (value >= 1024 && unitIndex < units.length - 1) {
+    value /= 1024
+    unitIndex += 1
+  }
+
+  return `${value.toFixed(1)} ${units[unitIndex]}`
+}
+
 export function CreateTaskModal({
   workspaceId,
   initialStatus,
@@ -82,16 +99,42 @@ export function CreateTaskModal({
   }
 
   function handleFilesChange(event: ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(event.target.files ?? [])
+    const nextFiles = Array.from(event.target.files ?? [])
+    const mergedFiles = [...selectedFiles, ...nextFiles]
+    const dedupedFiles = mergedFiles.filter((file, index, arr) => {
+      return (
+        arr.findIndex(
+          (candidate) =>
+            candidate.name === file.name &&
+            candidate.size === file.size &&
+            candidate.lastModified === file.lastModified
+        ) === index
+      )
+    })
 
-    if (files.length > MAX_TASK_FILES_PER_TASK) {
+    if (dedupedFiles.length > MAX_TASK_FILES_PER_TASK) {
       setError(`You can upload up to ${MAX_TASK_FILES_PER_TASK} files per task.`)
-      setSelectedFiles(files.slice(0, MAX_TASK_FILES_PER_TASK))
+      setSelectedFiles(dedupedFiles.slice(0, MAX_TASK_FILES_PER_TASK))
+      setFileInputKey((prev) => prev + 1)
       return
     }
 
-    setSelectedFiles(files)
+    setSelectedFiles(dedupedFiles)
+    setFileInputKey((prev) => prev + 1)
     setError(null)
+  }
+
+  function handleRemoveSelectedFile(fileToRemove: File) {
+    setSelectedFiles((current) =>
+      current.filter(
+        (file) =>
+          !(
+            file.name === fileToRemove.name &&
+            file.size === fileToRemove.size &&
+            file.lastModified === fileToRemove.lastModified
+          )
+      )
+    )
   }
 
   async function uploadSelectedFiles() {
@@ -142,6 +185,7 @@ export function CreateTaskModal({
 
     try {
       const uploadedFiles = await uploadSelectedFiles()
+
       const result = await createTaskAction({
         workspaceId,
         title: trimmedTitle,
@@ -241,14 +285,29 @@ export function CreateTaskModal({
               more).
             </p>
             {selectedFiles.length > 0 && (
-              <div className="rounded-md border border-border/70 bg-muted/30 px-3 py-2">
+              <div className="space-y-2">
                 <p className="text-xs font-medium">
                   Selected {selectedFiles.length}/{MAX_TASK_FILES_PER_TASK}
                 </p>
-                <ul className="mt-1 space-y-1">
+                <ul className="space-y-1">
                   {selectedFiles.map((file) => (
-                    <li key={`${file.name}-${file.size}`} className="text-xs text-muted-foreground">
-                      {file.name}
+                    <li
+                      key={`${file.name}-${file.size}-${file.lastModified}`}
+                      className="flex items-center justify-between gap-2 rounded-md border border-border/70 bg-muted/20 px-2 py-1.5 text-xs"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-foreground">{file.name}</p>
+                        <p className="text-muted-foreground">{formatBytes(file.size)}</p>
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 px-2 text-xs"
+                        onClick={() => handleRemoveSelectedFile(file)}
+                      >
+                        Delete
+                      </Button>
                     </li>
                   ))}
                 </ul>

@@ -14,9 +14,12 @@ import type {
 import {
   type TaskFileCreateInput,
   type TaskStatusValue,
+  taskFileCreateSchema,
   taskCreateSchema,
   taskUpdateSchema,
 } from "@/lib/validations/workspace-task"
+import { MAX_TASK_FILES_PER_TASK } from "@/lib/constants/files"
+import { z } from "zod"
 
 type CreateTaskInput = {
   workspaceId: string
@@ -71,6 +74,15 @@ type GetTaskDetailsInput = {
 
 type GetTaskDetailsPayload = {
   task: WorkspaceTaskDetails
+}
+
+type AddTaskFilesInput = {
+  taskId: string
+  files: TaskFileCreateInput[]
+}
+
+type AddTaskFilesPayload = {
+  files: WorkspaceTaskFile[]
 }
 
 function mapTaskActivityToPayload(activity: {
@@ -222,6 +234,106 @@ export async function createTaskAction(
   } catch (error) {
     console.error("Create task action error:", error)
     return { ok: false, error: "Failed to create task" }
+  }
+}
+
+export async function addTaskFilesAction(
+  input: AddTaskFilesInput
+): Promise<ActionResult<AddTaskFilesPayload>> {
+  const userId = await getAuthUserIdFromCookie()
+  if (!userId) {
+    return { ok: false, error: "Unauthorized" }
+  }
+
+  if (!input.taskId) {
+    return { ok: false, error: "Task id is required" }
+  }
+
+  const parsedFiles = z
+    .array(taskFileCreateSchema)
+    .min(1)
+    .max(MAX_TASK_FILES_PER_TASK)
+    .safeParse(input.files)
+  if (!parsedFiles.success) {
+    return { ok: false, error: "Invalid file input" }
+  }
+
+  try {
+    const existingTask = await prisma.task.findUnique({
+      where: { id: input.taskId },
+      select: {
+        id: true,
+        workspaceId: true,
+        deletedAt: true,
+        _count: {
+          select: {
+            files: true,
+          },
+        },
+      },
+    })
+
+    if (!existingTask) {
+      return { ok: false, error: "Task not found" }
+    }
+
+    if (existingTask.deletedAt) {
+      return { ok: false, error: "Cannot upload files to a deleted task" }
+    }
+
+    if (existingTask._count.files + parsedFiles.data.length > MAX_TASK_FILES_PER_TASK) {
+      return {
+        ok: false,
+        error: `You can upload up to ${MAX_TASK_FILES_PER_TASK} files per task.`,
+      }
+    }
+
+    const createdFiles = await prisma.$transaction(
+      parsedFiles.data.map((file) =>
+        prisma.taskFile.create({
+          data: {
+            taskId: input.taskId,
+            originalName: file.originalName,
+            storageName: file.storageName,
+            url: file.url,
+            mimeType: file.mimeType,
+            fileType: file.fileType,
+            sizeBytes: file.sizeBytes,
+            uploaderId: userId,
+          },
+          select: {
+            id: true,
+            originalName: true,
+            url: true,
+            mimeType: true,
+            fileType: true,
+            sizeBytes: true,
+            createdAt: true,
+            uploader: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        })
+      )
+    )
+
+    revalidatePath("/", "layout")
+    revalidatePath(`/workspaces/${existingTask.workspaceId}`)
+    revalidatePath("/workspaces")
+    revalidatePath("/files")
+
+    return {
+      ok: true,
+      data: {
+        files: createdFiles.map(mapTaskFileToPayload),
+      },
+    }
+  } catch (error) {
+    console.error("Add task files action error:", error)
+    return { ok: false, error: "Failed to add task files" }
   }
 }
 

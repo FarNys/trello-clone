@@ -8,20 +8,19 @@ const AUTH_PAGES = new Set(["/login", "/register"])
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const token = request.cookies.get(AUTH_COOKIE_NAME)
-  const isAuthPage = AUTH_PAGES.has(pathname)
-  // if ((!token || !token?.value) && !isAuthPage) {
-  //   const loginUrl = new URL("/login", request.url)
-  //   loginUrl.searchParams.set("next", `${pathname}${request.nextUrl.search}`)
-  //   return NextResponse.redirect(loginUrl)
-  // }
 
-  if (token && isAuthPage) {
+  const isLoginPage = AUTH_PAGES.has(pathname)
+
+  if (!token && !isLoginPage)
+    return NextResponse.redirect(new URL("/login", request.url))
+
+  if (token && isLoginPage)
     return NextResponse.redirect(new URL("/", request.url))
-  }
+
   return NextResponse.next()
 }
 
-export const proxyConfig = {
+export const config = {
   matcher: [
     "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
