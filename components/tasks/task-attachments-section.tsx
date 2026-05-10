@@ -64,7 +64,9 @@ export function TaskAttachmentsSection({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [fileInputKey, setFileInputKey] = useState(0)
   const [error, setError] = useState<string | null>(null)
-  const [previewImage, setPreviewImage] = useState<WorkspaceTaskFile | null>(null)
+  const [previewImage, setPreviewImage] = useState<WorkspaceTaskFile | null>(
+    null
+  )
   const [isSaving, startSaving] = useTransition()
 
   const remainingSlots = Math.max(0, MAX_TASK_FILES_PER_TASK - files.length)
@@ -163,7 +165,9 @@ export function TaskAttachmentsSection({
       } catch (uploadError) {
         console.error("Add task files error:", uploadError)
         setError(
-          uploadError instanceof Error ? uploadError.message : "Failed to add files"
+          uploadError instanceof Error
+            ? uploadError.message
+            : "Failed to add files"
         )
       }
     })
@@ -199,7 +203,9 @@ export function TaskAttachmentsSection({
               >
                 <div className="min-w-0">
                   <p className="truncate text-foreground">{file.name}</p>
-                  <p className="text-muted-foreground">{formatBytes(file.size)}</p>
+                  <p className="text-muted-foreground">
+                    {formatBytes(file.size)}
+                  </p>
                 </div>
                 <Button
                   type="button"
@@ -243,12 +249,12 @@ export function TaskAttachmentsSection({
             >
               {file.fileType === "IMAGE" && (
                 <div className="space-y-2">
-                  <Image
+                  <img
                     src={file.url}
                     alt={file.originalName}
                     width={960}
                     height={540}
-                    className="max-h-48 w-full rounded-md border border-border/60 object-contain"
+                    className="max-h-48 w-full rounded-md border border-border/60 object-cover"
                   />
                   <Button
                     type="button"
@@ -277,7 +283,8 @@ export function TaskAttachmentsSection({
                 <div className="space-y-1">
                   <p className="text-sm font-medium">{file.originalName}</p>
                   <p className="text-xs text-muted-foreground">
-                    {TASK_FILE_TYPE_LABELS[file.fileType]} • {formatBytes(file.sizeBytes)} •{" "}
+                    {TASK_FILE_TYPE_LABELS[file.fileType]} •{" "}
+                    {formatBytes(file.sizeBytes)} •{" "}
                     {DATE_FORMATTER.format(new Date(file.createdAt))}
                   </p>
                   {file.uploader && (
@@ -296,7 +303,11 @@ export function TaskAttachmentsSection({
                     </Button>
                   )}
                   <Button asChild size="sm" variant="outline">
-                    <a href={file.url} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={file.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       Open
                     </a>
                   </Button>
@@ -307,13 +318,18 @@ export function TaskAttachmentsSection({
         </div>
       )}
 
-      <Dialog open={Boolean(previewImage)} onOpenChange={() => setPreviewImage(null)}>
+      <Dialog
+        open={Boolean(previewImage)}
+        onOpenChange={() => setPreviewImage(null)}
+      >
         <DialogContent className="max-w-5xl">
           <DialogHeader>
-            <DialogTitle>{previewImage?.originalName ?? "Image preview"}</DialogTitle>
+            <DialogTitle>
+              {previewImage?.originalName ?? "Image preview"}
+            </DialogTitle>
           </DialogHeader>
           {previewImage && (
-            <Image
+            <img
               src={previewImage.url}
               alt={previewImage.originalName}
               width={1600}
